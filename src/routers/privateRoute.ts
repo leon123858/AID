@@ -7,8 +7,7 @@ router.get('/create', async function (req, res) {
 	const walletClient = req.body.walletClient;
 	try {
 		const transactionId = await walletClient.execute('deploycontract', [
-			`state.number = state.number ? state.number + 1 : 1;
-		if (!state.message) state["message"] = args.message;`,
+			`state.uid = args.uid;state.name = args.name;state.publicKey = args.publicKey;`,
 		]);
 		res.status(200).json({ contractId: transactionId, state: 'pending' });
 	} catch (err) {
