@@ -9,3 +9,7 @@ AID base on ourCoin
 3. `yarn start` in this project
 4. you can use AID server's API now
 5. (Optional) 每次錢包需要花費比特幣的操作完成, 都要到節點用挖礦指令挖一下
+
+## API ref
+
+OPEN_API: [link](./docs/openapi.yaml)
