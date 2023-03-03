@@ -1,20 +1,21 @@
 import express from 'express';
-import { execMongo } from '../libs/db';
+import { v4 as uuidv4 } from 'uuid';
+
 const router = express.Router();
 
 // bind human on AID contract
-router.get('/register/:contractId', async (req, res) => {
-	const walletClient = req.body.walletClient;
+router.post('/register/:contractId', async (req, res) => {
 	const contractId = req.params.contractId;
-	if (!contractId) {
-		res.status(400).send('should set contractId');
+	const { name, publicKey, walletClient } = req.body;
+	if (!contractId || !name || !publicKey) {
+		res.status(400).send('should set parameters');
 		return;
 	}
 	try {
 		const args = {
-			uid: 'AIDsampleUID',
-			name: 'personSetName',
-			publicKey: 'some256key',
+			uid: uuidv4(),
+			name: name,
+			publicKey: publicKey,
 		};
 		const transactionId = await walletClient.execute('callcontract', [
 			contractId,
@@ -29,11 +30,9 @@ router.get('/register/:contractId', async (req, res) => {
 router.get('/request/:userName', async (req, res) => {
 	const userName = req.params.userName;
 	try {
-		const data = (await execMongo(async (client) => {
-			const db = client.db('ourCoin');
-			const collection = db.collection('state');
-			return await collection.findOne({ 'state.name': userName });
-		})) as any;
+		const data = (await DBO.chainDb
+			.collection('state')
+			.findOne({ 'state.name': userName })) as any;
 		res
 			.status(200)
 			.json({ state: 'OK', contractId: data.txid, payload: { ...data.state } });
@@ -46,11 +45,9 @@ router.get('/request/:userName', async (req, res) => {
 router.get('/fetch/:contractId', async (req, res) => {
 	const contractId = req.params.contractId;
 	try {
-		const data = (await execMongo(async (client) => {
-			const db = client.db('ourCoin');
-			const collection = db.collection('state');
-			return await collection.findOne({ txid: contractId });
-		})) as any;
+		const data = (await DBO.chainDb
+			.collection('state')
+			.findOne({ txid: contractId })) as any;
 		res
 			.status(200)
 			.json({ state: 'OK', contractId: data.txid, payload: { ...data.state } });

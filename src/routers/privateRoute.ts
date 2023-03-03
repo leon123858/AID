@@ -3,7 +3,7 @@ import express from 'express';
 const router = express.Router();
 
 // create contract by user (user should run node to do this action in his computer)
-router.get('/create', async function (req, res) {
+router.post('/create', async function (req, res) {
 	const walletClient = req.body.walletClient;
 	try {
 		const transactionId = await walletClient.execute('deploycontract', [

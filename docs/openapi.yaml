@@ -13,7 +13,7 @@ externalDocs:
   description: Find out more about AID
   url: https://github.com/leon123858/AID
 servers:
-  - url: https://127.0.0.1
+  - url: http://127.0.0.1:3000
 tags:
   - name: private
     description: 用戶可以在自行運轉的節點調用, 需個人金鑰
@@ -35,14 +35,21 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
       security:
-         - api_key: ['holdNode']
-  /api/register:
+        - api_key: ['holdNode']
+  /api/register/{contractId}:
     post:
       tags:
         - api
       summary: link a AID contract to a AID service provider
       description: should have a AID service provider have API to let other 3rd party company use
       operationId: apiregister
+      parameters:
+        - name: contractId
+          in: path
+          description: contractId
+          required: true
+          schema:
+            type: string
       requestBody:
         description: payload for define a user in AID contract
         content:
@@ -56,28 +63,42 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiResponse' 
-  /api/request:
-    post:
+                $ref: '#/components/schemas/ApiResponse'
+  /api/request/{userName}:
+    get:
       tags:
         - api
       summary: get user message by AID service
       description: be used when 3rd party service want to let a user login
       operationId: apirequest
+      parameters:
+        - name: userName
+          in: path
+          description: userName
+          required: true
+          schema:
+            type: string
       responses:
         '200':
           description: Successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiResponse' 
-  /api/fetch:
-    post:
+                $ref: '#/components/schemas/ApiResponse'
+  /api/fetch/{contractId}:
+    get:
       tags:
         - api
       summary: get contract info by 3rd party hold node
       description: 3rd party service should check AID service's message
       operationId: apifetch
+      parameters:
+        - name: contractId
+          in: path
+          description: contractId
+          required: true
+          schema:
+            type: string
       responses:
         '200':
           description: Successful operation
@@ -86,16 +107,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
       security:
-         - api_key: ['holdNode']
+        - api_key: ['holdNode']
 components:
   schemas:
     User:
       type: object
       properties:
-        uid:
-          type: string
-          format: int64
-          example: iamrandomuniqueid
         name:
           type: string
           example: theUser
@@ -113,8 +130,6 @@ components:
           type: string
         message:
           type: string
-      xml:
-        name: '##default'
   securitySchemes:
     api_key:
       type: apiKey
