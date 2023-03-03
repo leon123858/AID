@@ -1,6 +1,7 @@
 # AID
 
 AID base on ourCoin
+基於 https://hdl.handle.net/11296/mmd64u 的實作
 
 ## How to execute
 
